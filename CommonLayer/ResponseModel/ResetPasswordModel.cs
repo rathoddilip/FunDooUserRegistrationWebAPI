@@ -5,12 +5,12 @@ using System.Text;
 
 namespace CommonLayer.ResponseModel
 {
-   public  class LoginModel: TimeDateModel
+   public class ResetPasswordModel: TimeDateModel
     {
         [Required]
-        public string EmailAddress { get; set; }
-
+        public string NewPassword { get; set; }
         [Required]
-        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+
     }
 }

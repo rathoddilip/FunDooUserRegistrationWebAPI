@@ -5,10 +5,12 @@ using System.Text;
 
 namespace CommonLayer.ResponseModel
 {
-    public class RegisterModel
+    public class RegisterModel: TimeDateModel
     {
-       /* [Required]
-        public string Id { get; set; }*/
+        DateTime baseDate = DateTime.Today;
+        DateTime now = DateTime.Now;
+        /* [Required]
+         public string Id { get; set; }*/
         [Required]
         public string FirstName { get; set; }
 
@@ -24,7 +26,8 @@ namespace CommonLayer.ResponseModel
         public string EmailAddress { get; set; }
         [Required]
         public string PhoneNumber { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime ModificationDate { get; set; }
+        //[DataType(DataType.Date)]
+        //[DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+       
     }
 }

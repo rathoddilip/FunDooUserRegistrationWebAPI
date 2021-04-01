@@ -1,4 +1,6 @@
-using AutoMapper;
+
+using BusinessLayer.InterFace;
+using BusinessLayer.Services;
 using CommonLayer.Helpers;
 using CommonLayer.ResponseModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -27,20 +29,19 @@ namespace FunDooUserAppAPI
 {
     public class Startup
     {
-        private readonly IWebHostEnvironment _env;
-        private readonly IConfiguration _configuration;
-        public Startup(IWebHostEnvironment env, IConfiguration configuration)
+        public Startup(IConfiguration configuration)
         {
-            _env = env;
-            _configuration = configuration;
+            Configuration = configuration;
         }
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // configure DI for application services
-            services.AddScoped<IUserRL, UserRL>();
+            services.AddControllers();
+            services.AddTransient<IUserBL, UserBL>();
+            services.AddTransient<IUserRL, UserRL>();
             // Enable Swagger   
             services.AddSwaggerGen(swagger =>
             {
@@ -48,7 +49,7 @@ namespace FunDooUserAppAPI
                 swagger.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "JWT Token Authentication API",
+                    Title = "JWT Token FunDoo Notes Web API",
                     Description = "ASP.NET Core 3.1 Web API"
                 });
                 // To Enable authorization using Swagger (JWT)  
@@ -78,101 +79,59 @@ namespace FunDooUserAppAPI
                 });
             });
             services.AddDbContext<DataContext>(options =>
-               options.UseSqlServer("DefaultConnection"));
-            services.AddDbContext<DataContext>(options =>
-               options.UseSqlServer(
-                   Configuration.GetConnectionString("DefaultConnection")));
-            //services.AddDbContext<DataContext>();
-            services.AddCors();
-            services.AddControllers();
-            //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            //services.AddAutoMapper();
-            // Auto Mapper Configurations
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new AutoMapperProfile());
-            });
+               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
-
-            // configure strongly typed settings objects
-            var appSettingsSection = _configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
-            // configure jwt authentication
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-
-            services.AddAuthentication(x =>
+            services.AddAuthentication(option =>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
             {
-                x.Events = new JwtBearerEvents
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    OnTokenValidated = context =>
-                    {
-                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserRL>();
-                        var userId = int.Parse(context.Principal.Identity.Name);
-                        var user = userService.GetById(userId);
-                        if (user == null)
-                        {
-                            // return unauthorized if user no longer exists
-                            context.Fail("Unauthorized");
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) //Configuration["JwtToken:SecretKey"]  
                 };
             });
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // migrate any database changes on startup (includes initial db creation)
-            dataContext.Database.Migrate();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyAPI");
+                // c.RoutePrefix = string.Empty;
+            });
+
+
+
+
             app.UseHttpsRedirection();
 
-            app.UseRouting();
-            // global cors policy
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
-
             app.UseAuthentication();
+
+            app.UseRouting();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-            // Swagger Configuration in API  
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
 
-            });
         }
     }
 }

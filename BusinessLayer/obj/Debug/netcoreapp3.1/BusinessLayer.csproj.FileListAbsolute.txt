@@ -7,3 +7,8 @@ C:\Users\Dilip Rathod\Desktop\Bridgelab\BatchDotNetFellowship-015\FunDooUserAppA
 C:\Users\Dilip Rathod\Desktop\Bridgelab\BatchDotNetFellowship-015\FunDooUserAppAPI\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.csproj.CoreCompileInputs.cache
 C:\Users\Dilip Rathod\Desktop\Bridgelab\BatchDotNetFellowship-015\FunDooUserAppAPI\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.dll
 C:\Users\Dilip Rathod\Desktop\Bridgelab\BatchDotNetFellowship-015\FunDooUserAppAPI\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.pdb
+C:\Users\Dilip Rathod\Desktop\Bridgelab\BatchDotNetFellowship-015\FunDooUserAppAPI\BusinessLayer\bin\Debug\netcoreapp3.1\CommonLayer.dll
+C:\Users\Dilip Rathod\Desktop\Bridgelab\BatchDotNetFellowship-015\FunDooUserAppAPI\BusinessLayer\bin\Debug\netcoreapp3.1\RepositoryLayer.dll
+C:\Users\Dilip Rathod\Desktop\Bridgelab\BatchDotNetFellowship-015\FunDooUserAppAPI\BusinessLayer\bin\Debug\netcoreapp3.1\CommonLayer.pdb
+C:\Users\Dilip Rathod\Desktop\Bridgelab\BatchDotNetFellowship-015\FunDooUserAppAPI\BusinessLayer\bin\Debug\netcoreapp3.1\RepositoryLayer.pdb
+C:\Users\Dilip Rathod\Desktop\Bridgelab\BatchDotNetFellowship-015\FunDooUserAppAPI\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.csproj.CopyComplete
