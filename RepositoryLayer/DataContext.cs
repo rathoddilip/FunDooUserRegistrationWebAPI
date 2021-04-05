@@ -1,5 +1,6 @@
 ﻿
 
+using CommonLayer.NoteResponseModel;
 using CommonLayer.ResponseModel;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,8 +15,17 @@ namespace RepositoryLayer
         {
 
         }
-       
+        public DbSet<Note> Notes { get; set; }
         public DbSet<User> Users { get; set; }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Note>(entity =>
+            {
+                entity.HasKey(e => e.NoteId);
+            });
+        }
+     
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             OnBeforeSaving();
@@ -35,7 +45,7 @@ namespace RepositoryLayer
         private void OnBeforeSaving()
         {
             var entries = ChangeTracker.Entries();
-            var utcNow = DateTime.UtcNow;
+            var utcNow = DateTime.Now;
 
             foreach (var entry in entries)
             {

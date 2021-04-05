@@ -42,6 +42,8 @@ namespace FunDooUserAppAPI
             services.AddControllers();
             services.AddTransient<IUserBL, UserBL>();
             services.AddTransient<IUserRL, UserRL>();
+            services.AddTransient<INotesRL, NotesRL>();
+            services.AddTransient<INotesBL, NotesBL>();
             // Enable Swagger   
             services.AddSwaggerGen(swagger =>
             {
@@ -98,6 +100,11 @@ namespace FunDooUserAppAPI
                     ValidAudience = Configuration["Jwt:Issuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) //Configuration["JwtToken:SecretKey"]  
                 };
+            });
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "localhost:6379";
             });
         }
 

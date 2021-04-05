@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CommonLayer.ResponseModel
 {
-   public  class LoginModel: TimeDateModel
+   public  class LoginModel
     {
         [Required]
         public string EmailAddress { get; set; }

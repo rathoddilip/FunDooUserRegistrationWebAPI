@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CommonLayer.ResponseModel
 {
-   public class ResetPasswordModel: TimeDateModel
+   public class ResetPasswordModel
     {
         [Required]
         public string NewPassword { get; set; }

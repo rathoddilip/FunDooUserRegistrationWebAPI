@@ -1,6 +1,7 @@
 ﻿
 using BusinessLayer.InterFace;
 using CommonLayer.Helpers;
+using CommonLayer.NoteResponseModel;
 using CommonLayer.ResponseModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -27,11 +28,13 @@ namespace FunDooUserAppAPI.Controllers
     public class UsersController : ControllerBase
     {
         IUserBL userBL;
+        INotesBL noteBL;
         private IConfiguration Configuration { get; }
-        public UsersController(IUserBL userBL, IConfiguration configuration)
+        public UsersController(INotesBL noteBL,IUserBL userBL, IConfiguration configuration)
         {
             //to get an access of IUserBL
             this.userBL = userBL;
+            this.noteBL = noteBL;
             Configuration = configuration;
 
 
@@ -119,28 +122,6 @@ namespace FunDooUserAppAPI.Controllers
             }           
 
         }
-
-
-        [Authorize]
-        [HttpPost("Authorize")]
-        public IActionResult Authorization()
-        {
-
-            var identity = User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                var claims = identity.Claims;
-                var name1 = claims.Where(x => x.Type == "Id").FirstOrDefault()?.Value;
-                var name = claims.Where(x => x.Type == "EmailAddress").FirstOrDefault()?.Value;
-                string[] list = { name, name1 };
-
-                return this.Ok(new { Success = true, Message = "Authorization is  Successfull", Data = list });
-
-
-            }
-            return null;
-        }
-
         /// <summary>
         /// Reset password
         /// </summary>
@@ -199,28 +180,6 @@ namespace FunDooUserAppAPI.Controllers
             else
             {
                 throw new Exception("Model is not valid");
-            }
-        }
-        /// <summary>
-        /// Get Deatils of particular ID
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        //Here return type represents the result of an action method
-        public IActionResult GetUser(int id)
-        {
-            try
-            {
-                //getting the data from BusinessLayer
-                User result = userBL.Get(id);
-                //this.Ok returns the data in json format
-                return this.Ok(new { Success = true, Message = "Get Successful", Data = result });
-            }
-
-            catch (Exception e)
-            {
-                return this.BadRequest(new { Success = false, Message = e.Message });
             }
         }
 
